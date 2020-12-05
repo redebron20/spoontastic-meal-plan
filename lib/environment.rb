@@ -1,4 +1,4 @@
-require "spoontastic/meal/plan/version"
+require "spoontastic-meal-plan/version"
 
 module Spoontastic
   module Meal
