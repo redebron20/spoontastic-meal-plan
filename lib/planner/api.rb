@@ -14,7 +14,7 @@ class SpoontasticMealPlan::API
         formatted_resp = JSON.parse(response)
         #resp_2 = HTTParty.get(url)
 
-        binding.pry
+        #binding.pry
 
     end
 

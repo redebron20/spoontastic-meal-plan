@@ -23,7 +23,6 @@ class SpoontasticMealPlan::MealScraper
     def self.parse_doc(search_type)
         site = URI.open("https://spoonacular.com/food-api/docs##{search_type.capitalize}")
         doc = Nokogiri::HTML(site)
-        binding.pry
     end
 
 end

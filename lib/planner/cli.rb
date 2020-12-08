@@ -9,19 +9,31 @@ class SpoontasticMealPlan::CLI
         get_diet
         get_intolerance
         
-        # puts "To see a customized meal plan for one day or an entire week, please choose between 'day' or 'week'."
-        # puts ""
-        # puts "To continue this later, enter 'exit'."
-        # puts ""
+        puts "To see a customized meal plan for one day or an entire week, please choose between 'day' or 'week'."
+        puts ""
+        puts "To continue this later, enter 'exit'."
+        puts ""
         menu
     end
 
     def get_diet
+        diet_list = SpoontasticMealPlan::MealScraper.diets
         puts "Please select your diet from the below list."
+        puts ""
+        list_results(diet_list)
     end
 
     def get_intolerance
+        intolerance_list = SpoontasticMealPlan::MealScraper.intolerances
         puts "Please select intolerance/s from the below list."
+        puts ""
+        list_results(intolerance_list)
+    end
+
+    def list_results(array)
+        array.each.with_index(1) do |element, index|
+            puts "#{index}. #{element}"
+        end
     end
 
     def menu
@@ -61,6 +73,5 @@ class SpoontasticMealPlan::CLI
         puts "Invalid entry. Please choose 'day' or 'week' or exit."
         menu
     end
-
 
 end
