@@ -2,7 +2,7 @@ require_relative 'lib/planner/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "spoontastic-meal-plan"
-  spec.version       = Spoontastic::Meal::Plan::VERSION
+  spec.version       = SpoontasticMealPlan::VERSION
   spec.authors       = ["redebron20"]
   spec.email         = ["redebron20@gmail.com"]
 

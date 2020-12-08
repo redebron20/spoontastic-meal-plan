@@ -1,3 +1,5 @@
+require "nokogiri"
+require "open-uri"
 require "httparty"
 require "net/http"
 require "pry"
@@ -9,4 +11,4 @@ require_relative "./planner/api"
 require_relative "./planner/cli"
 require_relative "./planner/meal"
 require_relative "./planner/ingredient"
-
+require_relative "./planner/mealscraper"

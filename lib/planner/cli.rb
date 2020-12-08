@@ -22,6 +22,7 @@ class SpoontasticMealPlan::CLI
 
     def get_intolerance
         puts "Please select intolerance/s from the below list."
+    end
 
     def menu
         input = gets.strip.downcase
