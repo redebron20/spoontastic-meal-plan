@@ -1,4 +1,4 @@
-require_relative 'lib/spoontastic-meal-plan/version'
+require_relative 'lib/planner/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "spoontastic-meal-plan"

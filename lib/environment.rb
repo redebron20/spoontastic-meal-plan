@@ -1,10 +1,12 @@
-require "spoontastic-meal-plan/version"
+require "httparty"
+require "net/http"
+require "pry"
+require "dotenv"
+Dotenv.load
 
-module Spoontastic
-  module Meal
-    module Plan
-      class Error < StandardError; end
-      # Your code goes here...
-    end
-  end
-end
+require_relative "./planner/version"
+require_relative "./planner/api"
+require_relative "./planner/cli"
+require_relative "./planner/meal"
+require_relative "./planner/ingredient"
+

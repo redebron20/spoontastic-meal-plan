@@ -5,14 +5,23 @@ class SpoontasticMealPlan::CLI
         puts ""
         puts "Hello! Welcome to Spoontastic Meal Plan."
         puts ""
-        puts "To see a customized meal plan for one day or an entire week, please choose between 'day' or 'week'."
-        puts ""
-        puts "To creat/add a new meal plan, enter 'new'."
-        puts ""
-        puts "To continue this later, enter 'exit'."
-        puts ""
+
+        get_diet
+        get_intolerance
+        
+        # puts "To see a customized meal plan for one day or an entire week, please choose between 'day' or 'week'."
+        # puts ""
+        # puts "To continue this later, enter 'exit'."
+        # puts ""
         menu
     end
+
+    def get_diet
+        puts "Please select your diet from the below list."
+    end
+
+    def get_intolerance
+        puts "Please select intolerance/s from the below list."
 
     def menu
         input = gets.strip.downcase
@@ -24,10 +33,6 @@ class SpoontasticMealPlan::CLI
         elsif input == "week"
             puts "Here's a customized meal plan for the week."
             week_plan
-            menu
-        elsif input == "new"
-            puts "Let's create a personalize meal plan!"
-            create_plan
             menu
         elsif input == "exit"
             goodbye
@@ -45,10 +50,6 @@ class SpoontasticMealPlan::CLI
 
     def week_plan
         puts "Week Meal"
-    end
-
-    def create_plan
-        puts "Diet, intolerances"
     end
 
     def goodbye
