@@ -21,6 +21,12 @@ class SpoontasticMealPlan::CLI
         puts "Please select your diet from the below list."
         puts ""
         list_results(diet_list)
+
+        diet_input = gets.strip.split(", ")
+        unless input_validation(diet_input, diet_list)
+            puts "Invalid input. Let's try again."
+            get_diet
+        end
     end
 
     def get_intolerance
@@ -28,6 +34,12 @@ class SpoontasticMealPlan::CLI
         puts "Please select intolerance/s from the below list."
         puts ""
         list_results(intolerance_list)
+
+        intolerance_input = gets.strip.split(", ")
+        unless input_validation(intolerance_input, intolerance_list)
+            puts "Invalid input. Let's try again."
+            get_diet
+          end
     end
 
     def list_results(array)
@@ -35,6 +47,12 @@ class SpoontasticMealPlan::CLI
             puts "#{index}. #{element}"
         end
     end
+
+    def input_validation(input_arr, data)
+        input_arr.all? do |input|
+          (1..data.length).include?(input.to_i) || input.downcase == "n"
+        end   
+      end
 
     def menu
         input = gets.strip.downcase
