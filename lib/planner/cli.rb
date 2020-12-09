@@ -10,10 +10,10 @@ class SpoontasticMealPlan::CLI
 
         get_diet
         get_intolerance
-        get_timeframe
+        #get_timeframe
 
-        get_mealplan
-        print_mealplan
+        get_mealplan_day
+        print_mealplan_day
 
                
     end
@@ -101,26 +101,28 @@ class SpoontasticMealPlan::CLI
     end
 
 #Recipe Controller
-    # def get_day_plan
+    def get_mealplan_day
         
-    #     puts "Here's your curated meal plan for a day."
+        puts "Here's your curated meal plan for a day."
+
+        day_mealplan = SpoontasticMealPlan::API.get_mealplan_day(search_hash)
+        SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
+
+        puts "Would you like to see another meal plan?"
+    end
+
+    # def get_mealplan
+    #     puts ""
+    #     puts "Here's your curated meal plan for the week."
 
     #     day_mealplan = SpoontasticMealPlan::API.get_day_mealplan(search_hash)
     #     SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
-
-    #     puts "Would you like to see more meal plans?"
     # end
 
-    def get_mealplan
-        puts ""
-        puts "Here's your curated meal plan for the week."
-    end
-
-    def print_mealplan
+    def print_mealplan_day
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts "#{i}. #{recipe_obj.title}"
           end 
-
     end
 
     def goodbye
