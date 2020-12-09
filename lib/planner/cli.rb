@@ -12,7 +12,7 @@ class SpoontasticMealPlan::CLI
         get_intolerance
         get_timeframe
 
-        get_day_plan
+        get_mealplan
         print_mealplan
 
                
@@ -71,49 +71,47 @@ class SpoontasticMealPlan::CLI
         end 
     end
 
-    def get_timeframe
-        puts ""
-        puts "To generate a meal plan for one day or an entire week, please type either 'day' or 'week'."
-        puts ""
-        puts "To quit the program, enter 'x'."
+    # def get_timeframe
+    #     puts ""
+    #     puts "To generate a meal plan for one day or an entire week, please type either 'day' or 'week'."
+    #     puts ""
+    #     puts "To quit the program, enter 'x'."
 
-        @timeframe = gets.strip.downcase
+    #     @timeframe = gets.strip.downcase
 
-        if timeframe == "day"
-            get_day_plan
-            get_timeframe
-        elsif timeframe == "week"
-            get_week_plan
-            get_timeframe
-        elsif timeframe == "x" || "exit"
-            goodbye
-        else
-            invalid_entry
-        end
-
-       
-    end
+    #     if timeframe == "day"
+    #         get_day_plan
+    #         get_timeframe
+    #     elsif timeframe == "week"
+    #         get_week_plan
+    #         get_timeframe
+    #     elsif timeframe == "x" || "exit"
+    #         goodbye
+    #     else
+    #         invalid_entry
+    #     end 
+    # end
 
     def search_hash
         @search_hash = {
           diet: user_diet,
           intolerance: user_intolerance,
-          timeframe: timeframe
+          #timeframe: timeframe
         }
     end
 
 #Recipe Controller
-    def get_day_plan
+    # def get_day_plan
         
-        puts "Here's your curated meal plan for a day."
+    #     puts "Here's your curated meal plan for a day."
 
-        day_mealplan = SpoontasticMealPlan::API.get_day_mealplan(search_hash)
-        SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
+    #     day_mealplan = SpoontasticMealPlan::API.get_day_mealplan(search_hash)
+    #     SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
 
-        puts "Would you like to see more meal plans?"
-    end
+    #     puts "Would you like to see more meal plans?"
+    # end
 
-    def get_week_plan
+    def get_mealplan
         puts ""
         puts "Here's your curated meal plan for the week."
     end
