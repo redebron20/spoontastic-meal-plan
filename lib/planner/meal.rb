@@ -1,12 +1,14 @@
 class SpoontasticMealPlan::Meals
-    attr_accessor :id, :title
-    attr_reader :instruction, :ingredients, :servings, :readyinMinutes
+    # attr_accessor :id, :title
+    # attr_reader :instruction, :ingredients, :servings, :readyinMinutes
     
     @@all = []
 
-    def initialize(recipe_hash)
-        meal_hash
-        recipe_hash.each {|k, v| self.send(("#{k}="), v)}
+    def initialize(meal_hash)
+        meal_hash.each do |k, v| 
+            self.class.attr_accessor key
+            self.send(("#{k}="), v)}
+        end
         save
     end
 
@@ -16,12 +18,6 @@ class SpoontasticMealPlan::Meals
 
     def self.all
         @@all
-    end
-    
-    def self.create_from_collection(recipes_arr)
-        recipes_arr.each do |recipe_hash|
-        self.new(recipe_hash)
-        end
     end
     
     def add_instruction(instruction)
