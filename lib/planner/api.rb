@@ -15,14 +15,16 @@ class SpoontasticMealPlan::API
 
     def self.get_mealplan_day(search_hash)
         parsed_params = parse_search(search_hash)
-        url = "https://api.spoonacular.com/recipes/search?timeFrame=day&diet=#{parsed_params[:diet]}&intolerances=#{parsed_params[:intolerance]}&instructionsRequired=true&apiKey=#{KEY}"
+        url = "https://api.spoonacular.com/mealplanner/generate?timeFrame=day&diet=#{parsed_params[:diet]}&intolerances=#{parsed_params[:intolerance]}&instructionsRequired=true&apiKey=#{KEY}"
         uri = URI(url)
         response = Net::HTTP.get(uri)
         mealplan = JSON.parse(response)
 
-        mealplan.map do |recipe_hash|
-            recipe_hash.select { |k, v| k == "id" || k == "title" }
-        end  
+        mealplan.each do |meals_hash|
+            Meals.new({id: meals_hash["id"], title: meals_hash["title"], servings: meals_hash["servings"], readyinMinutes: meals_hash["readyInMinutes"]})
+        end
+        mealplan
+        binding.pry
     end
 
     def self.parse_search(search_hash)

@@ -14,8 +14,7 @@ class SpoontasticMealPlan::CLI
 
         get_mealplan_day
         print_mealplan_day
-
-               
+     
     end
 
     def get_diet
@@ -100,14 +99,13 @@ class SpoontasticMealPlan::CLI
         }
     end
 
-#Recipe Controller
+#Mealplan Controller
     def get_mealplan_day
         
         puts "Here's your curated meal plan for a day."
 
         day_mealplan = SpoontasticMealPlan::API.get_mealplan_day(search_hash)
-        SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
-
+        binding.pry
         puts "Would you like to see another meal plan?"
     end
 

@@ -1,10 +1,11 @@
-class SpoontasticMealPlan::MealPlan
+class SpoontasticMealPlan::Meals
     attr_accessor :id, :title
-    attr_reader :instruction, :ingredients, :servings
+    attr_reader :instruction, :ingredients, :servings, :readyinMinutes
     
     @@all = []
 
     def initialize(recipe_hash)
+        meal_hash
         recipe_hash.each {|k, v| self.send(("#{k}="), v)}
         save
     end
