@@ -1,6 +1,8 @@
 
 class SpoontasticMealPlan::CLI
 
+    attr_accessor :user_diet, :user_intolerance, :meal_timeframe
+
     def call
         puts ""
         puts "Hello! Welcome to Spoontastic Meal Plan."
@@ -9,37 +11,45 @@ class SpoontasticMealPlan::CLI
         get_diet
         get_intolerance
         
-        puts "To see a customized meal plan for one day or an entire week, please choose between 'day' or 'week'."
+        
+        puts "To exit the program, press 'x'."
         puts ""
-        puts "To continue this later, enter 'exit'."
-        puts ""
-        menu
+        get_timeframe
     end
 
     def get_diet
         diet_list = SpoontasticMealPlan::MealScraper.diets
-        puts "Please select your diet from the below list."
+        puts ""
+        puts "Please select your diet from the below list. Use a comma to separate multiple choices (e.g., '3, 5'). Press 'n' if you'd like to skip."
         puts ""
         list_results(diet_list)
 
         diet_input = gets.strip.split(", ")
         unless input_validation(diet_input, diet_list)
+            puts ""
             puts "Invalid input. Let's try again."
+            puts ""
             get_diet
         end
+
+        @user_diet = select_search_word(diet_input, diet_list)
     end
 
     def get_intolerance
         intolerance_list = SpoontasticMealPlan::MealScraper.intolerances
-        puts "Please select intolerance/s from the below list."
+        puts ""
+        puts "Please select intolerance/s from the below list. Use a comma to separate multiple choices (e.g., '3, 5'). Press 'n' if none."
         puts ""
         list_results(intolerance_list)
 
         intolerance_input = gets.strip.split(", ")
         unless input_validation(intolerance_input, intolerance_list)
+            puts ""
             puts "Invalid input. Let's try again."
-            get_diet
+            get_intolerance
           end
+        
+        @user_intolerance = select_search_word(intolerance_input, intolerance_list)
     end
 
     def list_results(array)
@@ -54,36 +64,64 @@ class SpoontasticMealPlan::CLI
         end   
       end
 
-    def menu
+    def select_search_word(input_arr, data)
+        input_arr.map do |input|
+          input.downcase == "n" ? "" : data[input.to_i - 1]
+        end 
+    end
+
+    def get_timeframe
+        puts ""
+        puts "To generate a meal plan for one day or an entire week, please enter either 'day' or 'week'."
+        puts ""
+
         input = gets.strip.downcase
 
         if input == "day"
-            puts "Here's your customized meal plan for the day."
+            
             day_plan
-            menu
+            get_timeframe
         elsif input == "week"
-            puts "Here's a customized meal plan for the week."
+            puts ""
+            puts "Here's your customized meal plan for the week."
             week_plan
-            menu
-        elsif input == "exit"
+            get_timeframe
+        elsif input == "x" || "exit"
             goodbye
         else
             invalid_entry
         end
+
+        @meal_timeframe = input
     end
 
-    def day_plan
-        puts "Day Meal"
-        puts ""
-        puts ""
+    def search_hash
+        @search_hash = {
+          diets: user_diet,
+          intolerances: user_intolerance,
+          timeframe: meal_timeframe
+        }
+    end
+
+#Recipe Controller
+    def get_day_recipe
+        
+        puts "Here's your customized meal plan for the day."
+
+        basic_recipes_arr = WeeklyMealPlanner::FoodAPI.get_recipes_list(search_hash)
+        WeeklyMealPlanner::Recipe.create_from_collection(basic_recipes_arr)
+
         puts "Would you like to see other daily meal plans?"
+
+
     end
 
-    def week_plan
+    def get_week_recipe
         puts "Week Meal"
     end
 
     def goodbye
+        puts ""
         puts "Until then. Goodluck with meal planning! Please come back anytime."
     end
 
