@@ -1,5 +1,7 @@
 class SpoontasticMealPlan::MealPlan
-
+    attr_accessor :id, :title
+    attr_reader :instruction, :ingredients, :servings
+    
     @@all = []
 
     def initialize(recipe_hash)

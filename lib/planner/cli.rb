@@ -1,7 +1,7 @@
 
 class SpoontasticMealPlan::CLI
 
-    attr_accessor :user_diet, :user_intolerance, :meal_timeframe
+    attr_accessor :user_diet, :user_intolerance, :timeframe
 
     def call
         puts ""
@@ -11,6 +11,10 @@ class SpoontasticMealPlan::CLI
         get_diet
         get_intolerance
         get_timeframe
+
+        get_day_plan
+        print_mealplan
+
                
     end
 
@@ -73,28 +77,28 @@ class SpoontasticMealPlan::CLI
         puts ""
         puts "To quit the program, enter 'x'."
 
-        input = gets.strip.downcase
+        @timeframe = gets.strip.downcase
 
-        if input == "day"
+        if timeframe == "day"
             get_day_plan
             get_timeframe
-        elsif input == "week"
+        elsif timeframe == "week"
             get_week_plan
             get_timeframe
-        elsif input == "x" || "exit"
+        elsif timeframe == "x" || "exit"
             goodbye
         else
             invalid_entry
         end
 
-        @meal_timeframe = input
+       
     end
 
     def search_hash
         @search_hash = {
-          diets: user_diet,
-          intolerances: user_intolerance,
-          timeframe: meal_timeframe
+          diet: user_diet,
+          intolerance: user_intolerance,
+          timeframe: timeframe
         }
     end
 
@@ -104,6 +108,7 @@ class SpoontasticMealPlan::CLI
         puts "Here's your curated meal plan for a day."
 
         day_mealplan = SpoontasticMealPlan::API.get_day_mealplan(search_hash)
+        SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
 
         puts "Would you like to see more meal plans?"
     end
@@ -111,6 +116,13 @@ class SpoontasticMealPlan::CLI
     def get_week_plan
         puts ""
         puts "Here's your curated meal plan for the week."
+    end
+
+    def print_mealplan
+        SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
+            puts "#{i}. #{recipe_obj.title}"
+          end 
+
     end
 
     def goodbye
