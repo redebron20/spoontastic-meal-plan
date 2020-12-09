@@ -10,11 +10,8 @@ class SpoontasticMealPlan::CLI
 
         get_diet
         get_intolerance
-        
-        
-        puts "To exit the program, press 'x'."
-        puts ""
         get_timeframe
+               
     end
 
     def get_diet
@@ -47,7 +44,7 @@ class SpoontasticMealPlan::CLI
             puts ""
             puts "Invalid input. Let's try again."
             get_intolerance
-          end
+        end
         
         @user_intolerance = select_search_word(intolerance_input, intolerance_list)
     end
@@ -72,19 +69,19 @@ class SpoontasticMealPlan::CLI
 
     def get_timeframe
         puts ""
-        puts "To generate a meal plan for one day or an entire week, please enter either 'day' or 'week'."
+        puts "To generate a meal plan for one day or an entire week, please type either 'day' or 'week'."
         puts ""
+        puts "To quit the program, enter 'x'."
 
         input = gets.strip.downcase
 
         if input == "day"
-            
-            day_plan
+            puts ""
+            puts "Here's your curated meal plan for the day."
+            get_day_plan
             get_timeframe
         elsif input == "week"
-            puts ""
-            puts "Here's your customized meal plan for the week."
-            week_plan
+            get_week_plan
             get_timeframe
         elsif input == "x" || "exit"
             goodbye
@@ -104,20 +101,19 @@ class SpoontasticMealPlan::CLI
     end
 
 #Recipe Controller
-    def get_day_recipe
+    def get_day_plan
         
         puts "Here's your customized meal plan for the day."
 
         basic_recipes_arr = WeeklyMealPlanner::FoodAPI.get_recipes_list(search_hash)
         WeeklyMealPlanner::Recipe.create_from_collection(basic_recipes_arr)
 
-        puts "Would you like to see other daily meal plans?"
-
-
+        puts "Would you like to see more meal plans?"
     end
 
-    def get_week_recipe
-        puts "Week Meal"
+    def get_week_plan
+        puts ""
+        puts "Here's your curated meal plan for the week."
     end
 
     def goodbye

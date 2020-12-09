@@ -2,6 +2,6 @@
 
 require_relative '../lib/environment'
 
-#SpoontasticMealPlan::API.new.get_mealplan_day
+SpoontasticMealPlan::API.mealplan
 #SpoontasticMealPlan::MealScraper.diets
-SpoontasticMealPlan::CLI.new.call
+#SpoontasticMealPlan::CLI.new.call
