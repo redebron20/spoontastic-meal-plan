@@ -102,11 +102,11 @@ class SpoontasticMealPlan::CLI
 #Mealplan Controller
     def get_mealplan_day
         
-        puts "Here's your curated meal plan for a day."
+        puts "Here's your curated daily meal plan."
 
-        day_mealplan = SpoontasticMealPlan::API.get_mealplan_day(search_hash)
+        SpoontasticMealPlan::API.get_mealplan_day(search_hash)
         binding.pry
-        puts "Would you like to see another meal plan?"
+        puts "Would you like to see another curated daily meals?"
     end
 
     # def get_mealplan

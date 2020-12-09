@@ -7,7 +7,7 @@ class SpoontasticMealPlan::Meals
     def initialize(meal_hash)
         meal_hash.each do |k, v| 
             self.class.attr_accessor key
-            self.send(("#{k}="), v)}
+            self.send(("#{k}="), v)
         end
         save
     end
@@ -18,6 +18,7 @@ class SpoontasticMealPlan::Meals
 
     def self.all
         @@all
+        binding.pry
     end
     
     def add_instruction(instruction)

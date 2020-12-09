@@ -21,7 +21,7 @@ class SpoontasticMealPlan::API
         mealplan = JSON.parse(response)
 
         mealplan.each do |meals_hash|
-            Meals.new({id: meals_hash["id"], title: meals_hash["title"], servings: meals_hash["servings"], readyinMinutes: meals_hash["readyInMinutes"]})
+            SpoontasticMealPlan::Meals.new({id: meals_hash["id"].to_i, title: meals_hash["title"], servings: meals_hash["servings"], readyinMinutes: meals_hash["readyInMinutes"]})
         end
         mealplan
         binding.pry
