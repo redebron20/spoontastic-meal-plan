@@ -76,8 +76,6 @@ class SpoontasticMealPlan::CLI
         input = gets.strip.downcase
 
         if input == "day"
-            puts ""
-            puts "Here's your curated meal plan for the day."
             get_day_plan
             get_timeframe
         elsif input == "week"
@@ -103,10 +101,9 @@ class SpoontasticMealPlan::CLI
 #Recipe Controller
     def get_day_plan
         
-        puts "Here's your customized meal plan for the day."
+        puts "Here's your curated meal plan for a day."
 
-        basic_recipes_arr = WeeklyMealPlanner::FoodAPI.get_recipes_list(search_hash)
-        WeeklyMealPlanner::Recipe.create_from_collection(basic_recipes_arr)
+        day_mealplan = SpoontasticMealPlan::API.get_day_mealplan(search_hash)
 
         puts "Would you like to see more meal plans?"
     end

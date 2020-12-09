@@ -13,7 +13,7 @@ class SpoontasticMealPlan::API
 
     KEY = "85064a6e000745df8969cd158fcf80eb"
 
-    def self.mealplan
+    def self.get_day_mealplan
         url = "https://api.spoonacular.com/recipes/search?timeFrame=day&diet=vegetarian&intolerances=dairy&instructionsRequired=true&apiKey=#{KEY}"
         uri = URI(url)
         response = Net::HTTP.get(uri)
