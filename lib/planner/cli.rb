@@ -105,7 +105,7 @@ class SpoontasticMealPlan::CLI
         puts "Here's your curated daily meal plan."
 
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
-        binding.pry
+        
         puts "Would you like to see another curated daily meals?"
     end
 

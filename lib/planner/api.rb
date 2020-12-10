@@ -1,9 +1,10 @@
 
 class SpoontasticMealPlan::API
 
-    #URL = "https://api.spoonacular.com/mealplanner/generate"
+    # URL = "https://api.spoonacular.com/mealplanner/generate"
 
     # def hidden_key
+    #     binding.pry
     #     extention = "?apiKey=#{ENV['API_KEY']}"
     #     url = URL + extention
     #     uri = URI(url)
@@ -20,11 +21,9 @@ class SpoontasticMealPlan::API
         response = Net::HTTP.get(uri)
         mealplan = JSON.parse(response)
 
-        mealplan.each do |meals_hash|
-            SpoontasticMealPlan::Meals.new({id: meals_hash["id"].to_i, title: meals_hash["title"], servings: meals_hash["servings"], readyinMinutes: meals_hash["readyInMinutes"]})
+        mealplan["meals"].each do |meals_hash|
+            SpoontasticMealPlan::Meal.new({id: meals_hash["id"].to_i, title: meals_hash["title"], servings: meals_hash["servings"], readyinMinutes: meals_hash["readyInMinutes"]})
         end
-        mealplan
-        binding.pry
     end
 
     def self.parse_search(search_hash)
