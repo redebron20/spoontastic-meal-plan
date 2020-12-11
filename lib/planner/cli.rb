@@ -100,13 +100,10 @@ class SpoontasticMealPlan::CLI
     end
 
 #Mealplan Controller
-    def get_mealplan_day
-        
-        puts "Here's your curated daily meal plan."
+    def get_mealplan_day        
+        puts "Here's your curated meal plan for the day."
 
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
-        
-        puts "Would you like to see another curated daily meals?"
     end
 
     # def get_mealplan
@@ -120,8 +117,32 @@ class SpoontasticMealPlan::CLI
     def print_mealplan_day
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts "#{i}. #{recipe_obj.title}"
+            puts "Servings #{recipe_obj.servings}"
+            puts "ReadyInMinutes #{recipe_obj.readyinMinutes}"
           end 
     end
+
+    def select_recipe
+        puts "Select a recipe to read more; Enter 'new' to generate new meal plan #{print_mealplan_day}."
+        recipe_input = gets.strip.downcase
+    
+        unless selection_validation(recipe_input)
+          puts "Invalid input. Let's try again."
+          select_recipe
+        end
+    
+        if recipe_input == "search"
+          get_query_search
+          make_new_recipes_list
+          select_recipe
+        elsif recipe_input == "new"
+          make_new_recipes_list
+          select_recipe
+        else 
+          get_recipe(recipe_input)
+        end 
+      end
+    
 
     def goodbye
         puts ""
