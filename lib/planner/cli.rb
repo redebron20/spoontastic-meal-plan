@@ -14,7 +14,7 @@ class SpoontasticMealPlan::CLI
 
         get_mealplan_day
         print_mealplan_day
-        select_recipe
+        select_meal
      
     end
 
@@ -119,8 +119,8 @@ class SpoontasticMealPlan::CLI
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts ""
             puts "#{i}. #{recipe_obj.title}"
-            puts "Servings #{recipe_obj.servings}"
             puts "ReadyInMinutes #{recipe_obj.readyinMinutes}"
+            puts "Servings #{recipe_obj.servings}"
             puts ""
           end 
     end
@@ -133,7 +133,6 @@ class SpoontasticMealPlan::CLI
 
     def select_meal
         puts "Select a recipe to read more; enter 'new' to generate new meal plan; or 'x' to quit the program."
-        binding.pry
 
         meal_input = gets.strip.downcase
     
@@ -151,8 +150,32 @@ class SpoontasticMealPlan::CLI
     end
     
     def selection_validation(input)
-        (1..SpoontasticMealPlan::Meal.all.length).include?(input.to_i) || input == "new")
+        (1..SpoontasticMealPlan::Meal.all.length).include?(input.to_i) || input == "new"
     end
+
+    def get_meal(input)
+        index = input.to_i - 1
+        selected_meal = SpoontasticMealPlan::Meal.all[index]
+        add_meal_details(selected_meal)
+    end
+
+    def add_meal_details(selected_meal)
+        meal_instruction = SpoontasticMealPlan::API.get_meal_ingredients(recipe.id)
+        if meal_instruction
+            meal.add_instruction(meal_instruction.flatten)
+        end
+      
+          meal_ingredients = SpoontasticMealPlan::API.get_meal_ingredients(recipe.id)
+        if recipe_ingredients
+            meal.add_ingredients(meal_ingredients)
+        end 
+      
+        meal_servings = SpoontasticMealPlan::API.get_servings(recipe.id)
+        meal.add_servings(meal_servings)
+      
+        display_meal(meal)
+
+        end 
 
 
     def goodbye
