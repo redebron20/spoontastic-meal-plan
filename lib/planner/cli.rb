@@ -182,7 +182,7 @@ class SpoontasticMealPlan::CLI
     def shopping_list(recipe)
         puts "Would you like to add ingredients to your shopping list? (y/n)"
         input = gets.strip.downcase
-        unless input_validation(input)
+        unless planner_input_validation(input)
           puts "Invalid input. Let's try again."
           shopping_list(recipe)
         end
@@ -194,21 +194,79 @@ class SpoontasticMealPlan::CLI
           display_mealplan_day
           select_recipe
         end
-      end 
+    end 
 
-      def planner_input_validation(input)
+    def planner_input_validation(input)
+        input == "y" || input == "n"
+    end 
+
+    def update_serving(recipe)
+        puts "How many servings of #{recipe.title} would you like to make?"
+        serving_input = gets.strip.to_i
+        unless serving_input > 0
+          puts "Invalid input. Let's try again."
+          update_serving(recipe)
+        end 
+        
+        updated_ingredient = recipe.ingredient.map do |ingredient_hash|
+          ingredient_hash["amount"] *= (servings_input.to_f / recipe.servings.to_f)
+          ingredient_hash
+        end
+
+        SpoontasticMealPlan::Ingredient.create_from_collection(updated_ingredient)
+        puts "Ingredients for #{serving_input} servings of #{recipe.title} added to your planner."
+    end 
+
+    def display_shopping_list
+        puts "Would you like to see your planner? (y/n)"
+        display_sl_input = gets.strip.downcase
+        unless display_sl_input_validation(display_sl_input)
+          puts "Invalid input. Let's try again."
+          display_planner
+        end
+    
+        if display_planner_input == "y"
+            SpoontasticMealPlan::Ingredient.all.each do |ingredient_obj|
+                parsed_amount = parse_ingredient_amount(ingredient_obj.amount)
+                puts "#{parsed_amount} #{ingredient_obj.unit} #{ingredient_obj.name}"
+            end
+            get_more_input
+        else 
+            display_mealplan_day
+            select_recipe
+        end
+    end 
+
+    def display_sl_input_validation(input)
         input == "y" || input == "n"
       end 
+    
+      def get_more_input
+        puts "\nEnter 'more' to add more ingredients or 'exit' to quit."
+        planner_more_input = gets.strip.downcase
+        unless more_input_validation(planner_more_input)
+          puts "\nInvalid input. Let's stry again."
+          get_more_input
+        end 
+    
+        if planner_more_input == "more"
+            display_mealplan_day
+            select_recipe
+        else 
+           goodbye
+        end  
+      end
+    
+      def more_input_validation(input)
+        input == "more" || input == "exit"
+      end
+    end
 
     def goodbye
         puts ""
-        puts "Until then. Goodluck with meal planning! Please come back anytime."
+        puts "Until then. Goodluck with your meal preparation! Please come back anytime."
     end
-
-    def invalid_entry
-        puts "Invalid entry. Please choose 'day' or 'week' or exit."
-        menu
-    end
+    
 end
 
 

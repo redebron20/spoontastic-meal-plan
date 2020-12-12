@@ -11,6 +11,12 @@ class SpoontasticMealPlan::Ingredient
         save
     end
 
+    def self.create_from_collection(ingredient_arr)
+        ingredient_arr.each do |ingredient_hash|
+            self.new(ingredient_hash)
+        end
+    end
+
     def save
         self.class.all << self
     end
