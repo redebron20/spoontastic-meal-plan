@@ -125,31 +125,35 @@ class SpoontasticMealPlan::CLI
           end 
     end
 
-    def make_new_recipes_list
+    def get_new_mealplan_list
         SpoontasticMealPlan::Meal.reset
         get_mealplan_day
         print_mealplan_day
     end
 
-    def select_recipe
+    def select_meal
         puts "Select a recipe to read more; enter 'new' to generate new meal plan; or 'x' to quit the program."
         binding.pry
 
-        recipe_input = gets.strip.downcase
+        meal_input = gets.strip.downcase
     
-        unless selection_validation(recipe_input)
-          puts "Invalid input. Let's try again."
-          select_recipe
+        unless selection_validation(meal_input)
+            puts "Invalid input. Let's try again."
+            select_meal
         end
     
-        if recipe_input == "new"
-          make_new_recipes_list
-          select_recipe
+        if meal_input == "new"
+            get_new_mealplan_list
+            select_meal
         elsif 
-          get_recipe(recipe_input)
+            get_meal(meal_input)
         end 
     end
     
+    def selection_validation(input)
+        (1..SpoontasticMealPlan::Meal.all.length).include?(input.to_i) || input == "new")
+    end
+
 
     def goodbye
         puts ""
