@@ -1,6 +1,6 @@
 class SpoontasticMealPlan::Meal
-    # attr_accessor :id, :title
-    # attr_reader :instruction, :ingredients, :servings, :readyinMinutes
+    # attr_accessor :id, :title, :servings, :readyinMinutes
+    attr_reader :instruction, :ingredient
     
     @@all = []
 

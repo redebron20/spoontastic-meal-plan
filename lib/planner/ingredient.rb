@@ -1,10 +1,10 @@
 
 class SpoontasticMealPlan::Ingredient
-    attr_accessor :name, :amount, :unit
+    # attr_accessor :name, :amount, :unit
     @@all = []
 
     def initialize(ingredient_hash)
-        meal_hash.each do |k, v| 
+        ingredient_hash.each do |k, v| 
             self.class.attr_accessor k
             self.send(("#{k}="), v)
         end

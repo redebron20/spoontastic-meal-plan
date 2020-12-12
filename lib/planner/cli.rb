@@ -168,21 +168,15 @@ class SpoontasticMealPlan::CLI
     def add_recipe_details(recipe)
         
         recipe_instruction = SpoontasticMealPlan::API.get_recipe_instruction(recipe.id)
-            if recipe_instruction
-                recipe.add_instruction(recipe_instruction.flatten)
-            end
-      
+        recipe.add_instruction(recipe_instruction.flatten)
+    
         recipe_ingredient = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
-            if recipe_ingredient
-                recipe.add_ingredient(recipe_ingredient)
-            end 
-      
-            
+        recipe.add_ingredient(recipe_ingredient)
+               
         # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)
         # recipe.add_serving(recipe_serving)
       
         display_recipe(recipe)
-
     end 
 
     def display_recipe(recipe)
@@ -191,15 +185,31 @@ class SpoontasticMealPlan::CLI
         puts "Cook Time: #{recipe.readyinMinutes} minutes"
         puts "Serves: #{recipe.servings}"
         puts "Steps:"
-        recipe.instruction.each { |step| puts "#{step}" }
+        recipe.instruction.each.with_index(1) { |step, i| puts "#{i}. #{step}" }
         puts "Ingredients:"
-        recipe.ingredients.each do |ingredient_hash|
+        recipe.ingredient.each do |ingredient_hash|
           parsed_amount = parse_ingredient_amount(ingredient_hash["amount"])
           puts "#{parsed_amount} #{ingredient_hash['unit']} #{ingredient_hash['name']}"
         end
         # puts "Servings: #{recipe.servings}"
         
-        planner_selection(recipe)
+        #planner_selection(recipe)
+      end
+
+      def parse_ingredient_amount(amount)
+        amount_arr = amount.to_s.split(".")
+        if amount_arr[1] == "0"
+          amount_arr[0]
+        else
+          amount = amount.to_r.rationalize(0.05)
+          amount_as_integer = amount.to_i
+          if (amount_as_integer != amount.to_f) && (amount_as_integer > 0)
+            fraction = amount - amount_as_integer
+            "#{amount_as_integer} #{fraction}"
+          else
+            amount.to_s
+          end
+        end
       end
 
     def goodbye
