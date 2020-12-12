@@ -32,5 +32,4 @@ class SpoontasticMealPlan::Meal
         @@all.clear
     end 
     
-
 end

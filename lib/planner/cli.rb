@@ -135,7 +135,7 @@ class SpoontasticMealPlan::CLI
     end
 
     def select_recipe
-        puts "Select a recipe to read more, or enter 'new' to generate a new meal plan."
+        puts "Type a number to see the recipe, or enter 'new' to generate a new meal plan."
         #or 'x' to quit the program.
 
         input = gets.strip.downcase
@@ -177,6 +177,7 @@ class SpoontasticMealPlan::CLI
                 recipe.add_ingredient(recipe_ingredient)
             end 
       
+            
         # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)
         # recipe.add_serving(recipe_serving)
       
@@ -185,6 +186,10 @@ class SpoontasticMealPlan::CLI
     end 
 
     def display_recipe(recipe)
+        
+        puts "Title: #{recipe.title}"
+        puts "Cook Time: #{recipe.readyinMinutes} minutes"
+        puts "Serves: #{recipe.servings}"
         puts "Steps:"
         recipe.instruction.each { |step| puts "#{step}" }
         puts "Ingredients:"
