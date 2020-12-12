@@ -125,6 +125,12 @@ class SpoontasticMealPlan::CLI
           end 
     end
 
+    def make_new_recipes_list
+        SpoontasticMealPlan::Meal.reset
+        get_mealplan_day
+        print_mealplan_day
+    end
+
     def select_recipe
         puts "Select a recipe to read more; enter 'new' to generate new meal plan; or 'x' to quit the program."
         binding.pry
