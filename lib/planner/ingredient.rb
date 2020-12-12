@@ -3,15 +3,16 @@ class SpoontasticMealPlan::Ingredient
     attr_accessor :name, :amount, :unit
     @@all = []
 
-    def initialize(ingredients_hash)
-        ingredients_hash.each {|k, v| self.send(("#{k}="), v)}
-        @@all << self
+    def initialize(ingredient_hash)
+        meal_hash.each do |k, v| 
+            self.class.attr_accessor k
+            self.send(("#{k}="), v)
+        end
+        save
     end
 
-    def self.create_from_collection(ingredients_arr)
-        ingredients_arr.each do |ingredients_hash|
-        self.new(ingredients_hash)
-        end
+    def save
+        self.class.all << self
     end
 
     def self.all
