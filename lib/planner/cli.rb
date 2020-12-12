@@ -4,20 +4,16 @@ class SpoontasticMealPlan::CLI
     attr_accessor :user_diet, :user_intolerance, :timeframe
 
     def call
-        # recipe_id = 190292
-        # SpoontasticMealPlan::API.get_meal_ingredient(recipe_id)
         puts ""
         puts "Hello! Welcome to Spoontastic Meal Plan."
         puts ""
 
         get_diet
         get_intolerance
-        #get_timeframe
 
         get_mealplan_day
-        print_mealplan_day
-        select_recipe
-     
+        display_mealplan_day
+        select_recipe   
     end
 
     def get_diet
@@ -65,34 +61,13 @@ class SpoontasticMealPlan::CLI
         input_arr.all? do |input|
           (1..data.length).include?(input.to_i) || input.downcase == "n"
         end   
-      end
+    end
 
     def select_search_word(input_arr, data)
         input_arr.map do |input|
           input.downcase == "n" ? "" : data[input.to_i - 1]
         end 
     end
-
-    # def get_timeframe
-    #     puts ""
-    #     puts "To generate a meal plan for one day or an entire week, please type either 'day' or 'week'."
-    #     puts ""
-    #     puts "To quit the program, enter 'x'."
-
-    #     @timeframe = gets.strip.downcase
-
-    #     if timeframe == "day"
-    #         get_day_plan
-    #         get_timeframe
-    #     elsif timeframe == "week"
-    #         get_week_plan
-    #         get_timeframe
-    #     elsif timeframe == "x" || "exit"
-    #         goodbye
-    #     else
-    #         invalid_entry
-    #     end 
-    # end
 
     def search_hash
         @search_hash = {
@@ -110,22 +85,14 @@ class SpoontasticMealPlan::CLI
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
     end
 
-    # def get_mealplan
-    #     puts ""
-    #     puts "Here's your curated meal plan for the week."
-
-    #     day_mealplan = SpoontasticMealPlan::API.get_day_mealplan(search_hash)
-    #     SpoontasticMealPlan::Meal.create_from_collection(day_mealplan)
-    # end
-
-    def print_mealplan_day
+    def display_mealplan_day
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts ""
             puts "#{i}. #{recipe_obj.title}"
             puts "ReadyInMinutes #{recipe_obj.readyinMinutes}"
             puts "Servings #{recipe_obj.servings}"
             puts ""
-          end 
+        end 
     end
 
     def get_new_mealplan_list
@@ -180,37 +147,58 @@ class SpoontasticMealPlan::CLI
     end 
 
     def display_recipe(recipe)
-        
         puts "Title: #{recipe.title}"
         puts "Cook Time: #{recipe.readyinMinutes} minutes"
         puts "Serves: #{recipe.servings}"
+        puts ""
         puts "Steps:"
         recipe.instruction.each.with_index(1) { |step, i| puts "#{i}. #{step}" }
+        puts ""
         puts "Ingredients:"
         recipe.ingredient.each do |ingredient_hash|
-          parsed_amount = parse_ingredient_amount(ingredient_hash["amount"])
-          puts "#{parsed_amount} #{ingredient_hash['unit']} #{ingredient_hash['name']}"
+            parsed_amount = parse_ingredient_amount(ingredient_hash["amount"])
+            puts "#{parsed_amount} #{ingredient_hash['unit']} #{ingredient_hash['name']}"
         end
-        # puts "Servings: #{recipe.servings}"
-        
-        #planner_selection(recipe)
-      end
 
-      def parse_ingredient_amount(amount)
+        shopping_list(recipe)
+    end
+
+    def parse_ingredient_amount(amount)
         amount_arr = amount.to_s.split(".")
         if amount_arr[1] == "0"
-          amount_arr[0]
+            amount_arr[0]
         else
-          amount = amount.to_r.rationalize(0.05)
-          amount_as_integer = amount.to_i
-          if (amount_as_integer != amount.to_f) && (amount_as_integer > 0)
+            amount = amount.to_r.rationalize(0.05)
+            amount_as_integer = amount.to_i
+            if (amount_as_integer != amount.to_f) && (amount_as_integer > 0)
             fraction = amount - amount_as_integer
             "#{amount_as_integer} #{fraction}"
-          else
-            amount.to_s
-          end
+            else
+                amount.to_s
+            end
         end
-      end
+    end
+
+    def shopping_list(recipe)
+        puts "Would you like to add ingredients to your shopping list? (y/n)"
+        input = gets.strip.downcase
+        unless input_validation(input)
+          puts "Invalid input. Let's try again."
+          shopping_list(recipe)
+        end
+    
+        if input == "y"
+          update_servings(recipe)
+          display_shopping_list
+        else 
+          display_mealplan_day
+          select_recipe
+        end
+      end 
+
+      def planner_input_validation(input)
+        input == "y" || input == "n"
+      end 
 
     def goodbye
         puts ""
@@ -221,5 +209,9 @@ class SpoontasticMealPlan::CLI
         puts "Invalid entry. Please choose 'day' or 'week' or exit."
         menu
     end
-
 end
+
+
+    
+
+
