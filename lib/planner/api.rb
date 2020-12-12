@@ -35,14 +35,15 @@ class SpoontasticMealPlan::API
         search_hash
     end
 
-    def self.get_meal_ingredients(recipe.id)
+    def self.get_recipe_ingredient(id)
         binding.pry
-        url = "https://api.spoonacular.com/recipes/#{id}/information?includeNutrition=false&apiKey=#{ENV['API_KEY']}"
-        uri = URI(url)
+        uri = URI("https://api.spoonacular.com/recipes/#{id}/information?includeNutrition=false&apiKey=#{ENV['API_KEY']}")
+        #uri = URI(url)
         response = Net::HTTP.get(uri)
         ingredient = JSON.parse(response)
-        ingredient.map do |ingredient_hash|
+        ingredient["extendedIngredients"].map do |ingredient_hash|
             ingredient_hash.select { |k, v| k == "name" || k == "amount" || k == "unit"}
+        end
     end
 
 

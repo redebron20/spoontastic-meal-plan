@@ -4,6 +4,8 @@ class SpoontasticMealPlan::CLI
     attr_accessor :user_diet, :user_intolerance, :timeframe
 
     def call
+        # recipe_id = 190292
+        # SpoontasticMealPlan::API.get_meal_ingredient(recipe_id)
         puts ""
         puts "Hello! Welcome to Spoontastic Meal Plan."
         puts ""
@@ -14,7 +16,7 @@ class SpoontasticMealPlan::CLI
 
         get_mealplan_day
         print_mealplan_day
-        select_meal
+        select_recipe
      
     end
 
@@ -131,21 +133,21 @@ class SpoontasticMealPlan::CLI
         print_mealplan_day
     end
 
-    def select_meal
+    def select_recipe
         puts "Select a recipe to read more; enter 'new' to generate new meal plan; or 'x' to quit the program."
 
-        meal_input = gets.strip.downcase
+        recipe_input = gets.strip.downcase
     
-        unless selection_validation(meal_input)
+        unless selection_validation(recipe_input)
             puts "Invalid input. Let's try again."
-            select_meal
+            select_recipe
         end
     
-        if meal_input == "new"
+        if recipe_input == "new"
             get_new_mealplan_list
-            select_meal
+            select_recipe
         elsif 
-            get_meal(meal_input)
+            get_recipe(recipe_input)
         end 
     end
     
@@ -153,30 +155,42 @@ class SpoontasticMealPlan::CLI
         (1..SpoontasticMealPlan::Meal.all.length).include?(input.to_i) || input == "new"
     end
 
-    def get_meal(input)
+    def get_recipe(input)
         index = input.to_i - 1
-        selected_meal = SpoontasticMealPlan::Meal.all[index]
-        add_meal_details(selected_meal)
+        selected_recipe = SpoontasticMealPlan::Meal.all[index]
+        add_recipe_details(selected_recipe)
     end
 
-    def add_meal_details(selected_meal)
-        meal_instruction = SpoontasticMealPlan::API.get_meal_ingredients(recipe.id)
-        if meal_instruction
-            meal.add_instruction(meal_instruction.flatten)
+    def add_recipe_details(recipe)
+        recipe_instruction = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
+            if recipe_instruction
+                recipe.add_instruction(recipe_instruction.flatten)
+            end
+      
+        recipe_ingredient = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
+            if recipe_ingredient
+                recipe.add_ingredient(recipe_ingredient)
+            end 
+      
+        # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)
+        # recipe.add_serving(recipe_serving)
+      
+        display_recipe(recipe)
+
+    end 
+
+    def display_recipe(recipe)
+        puts "Steps:"
+        recipe.instruction.each { |step| puts "#{step}" }
+        puts "Ingredients:"
+        recipe.ingredients.each do |ingredient_hash|
+          parsed_amount = parse_ingredient_amount(ingredient_hash["amount"])
+          puts "#{parsed_amount} #{ingredient_hash['unit']} #{ingredient_hash['name']}"
         end
-      
-          meal_ingredients = SpoontasticMealPlan::API.get_meal_ingredients(recipe.id)
-        if recipe_ingredients
-            meal.add_ingredients(meal_ingredients)
-        end 
-      
-        meal_servings = SpoontasticMealPlan::API.get_servings(recipe.id)
-        meal.add_servings(meal_servings)
-      
-        display_meal(meal)
-
-        end 
-
+        # puts "Servings: #{recipe.servings}"
+        
+        planner_selection(recipe)
+      end
 
     def goodbye
         puts ""
