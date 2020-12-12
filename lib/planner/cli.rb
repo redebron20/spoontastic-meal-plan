@@ -14,6 +14,7 @@ class SpoontasticMealPlan::CLI
 
         get_mealplan_day
         print_mealplan_day
+        select_recipe
      
     end
 
@@ -116,14 +117,18 @@ class SpoontasticMealPlan::CLI
 
     def print_mealplan_day
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
+            puts ""
             puts "#{i}. #{recipe_obj.title}"
             puts "Servings #{recipe_obj.servings}"
             puts "ReadyInMinutes #{recipe_obj.readyinMinutes}"
+            puts ""
           end 
     end
 
     def select_recipe
-        puts "Select a recipe to read more; Enter 'new' to generate new meal plan #{print_mealplan_day}."
+        puts "Select a recipe to read more; enter 'new' to generate new meal plan; or 'x' to quit the program."
+        binding.pry
+
         recipe_input = gets.strip.downcase
     
         unless selection_validation(recipe_input)
@@ -131,17 +136,13 @@ class SpoontasticMealPlan::CLI
           select_recipe
         end
     
-        if recipe_input == "search"
-          get_query_search
+        if recipe_input == "new"
           make_new_recipes_list
           select_recipe
-        elsif recipe_input == "new"
-          make_new_recipes_list
-          select_recipe
-        else 
+        elsif 
           get_recipe(recipe_input)
         end 
-      end
+    end
     
 
     def goodbye
