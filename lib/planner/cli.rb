@@ -166,14 +166,15 @@ class SpoontasticMealPlan::CLI
     end
 
     def add_recipe_details(recipe)
+        
         recipe_instruction = SpoontasticMealPlan::API.get_recipe_instruction(recipe.id)
             if recipe_instruction
-                meal.add_instruction(meal_instruction.flatten)
+                recipe.add_instruction(recipe_instruction.flatten)
             end
       
         recipe_ingredient = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
             if recipe_ingredient
-                meal.add_ingredient(meal_ingredient)
+                recipe.add_ingredient(recipe_ingredient)
             end 
       
         # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)
