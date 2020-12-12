@@ -24,8 +24,8 @@ class SpoontasticMealPlan::Meal
         @instruction = instruction
     end
     
-    def add_ingredients(ingredients)
-        @ingredients = ingredients
+    def add_ingredients(ingredient)
+        @ingredient = ingredient
     end
 
     def self.reset

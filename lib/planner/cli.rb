@@ -103,7 +103,8 @@ class SpoontasticMealPlan::CLI
     end
 
 #Mealplan Controller
-    def get_mealplan_day        
+    def get_mealplan_day 
+        puts ""       
         puts "Here's your curated meal plan for the day."
 
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
@@ -134,20 +135,23 @@ class SpoontasticMealPlan::CLI
     end
 
     def select_recipe
-        puts "Select a recipe to read more; enter 'new' to generate new meal plan; or 'x' to quit the program."
+        puts "Select a recipe to read more, or enter 'new' to generate a new meal plan."
+        #or 'x' to quit the program.
 
-        recipe_input = gets.strip.downcase
+        input = gets.strip.downcase
     
-        unless selection_validation(recipe_input)
+        unless selection_validation(input)
             puts "Invalid input. Let's try again."
             select_recipe
         end
     
-        if recipe_input == "new"
+        if input == "new"
             get_new_mealplan_list
             select_recipe
-        elsif 
-            get_recipe(recipe_input)
+        # elsif input == "x" || "exit"
+        #     goodbye
+        elsif
+            get_recipe(input)
         end 
     end
     
@@ -162,14 +166,14 @@ class SpoontasticMealPlan::CLI
     end
 
     def add_recipe_details(recipe)
-        recipe_instruction = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
+        recipe_instruction = SpoontasticMealPlan::API.get_recipe_instruction(recipe.id)
             if recipe_instruction
-                recipe.add_instruction(recipe_instruction.flatten)
+                meal.add_instruction(meal_instruction.flatten)
             end
       
         recipe_ingredient = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
             if recipe_ingredient
-                recipe.add_ingredient(recipe_ingredient)
+                meal.add_ingredient(meal_ingredient)
             end 
       
         # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)

@@ -36,7 +36,6 @@ class SpoontasticMealPlan::API
     end
 
     def self.get_recipe_ingredient(id)
-        binding.pry
         uri = URI("https://api.spoonacular.com/recipes/#{id}/information?includeNutrition=false&apiKey=#{ENV['API_KEY']}")
         #uri = URI(url)
         response = Net::HTTP.get(uri)
