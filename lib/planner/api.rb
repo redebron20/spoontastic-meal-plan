@@ -37,4 +37,10 @@ class SpoontasticMealPlan::API
         end
     end
 
+    # def self.get_JSON(url)
+    #     uri = URI.parse(url)
+    #     response = Net::HTTP.get_response(uri)
+    #     JSON.parse(response.body)
+    #   end 
+
 end
