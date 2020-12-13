@@ -1,8 +1,6 @@
 # Spoontastic::Meal::Plan
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/spoontastic/meal/plan`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This CLI application allows the user to search for meal plans based on diets and intolerances. The user can view recipe details and save ingredients for desired number of servings in the shopping list. User can save ingredients for multiple recipes.
 
 ## Installation
 
@@ -22,7 +20,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Type the below and follow the on screen prompts.
+
+    ./bin/start
 
 ## Development
 
