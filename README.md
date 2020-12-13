@@ -1,6 +1,6 @@
 # Spoontastic::Meal::Plan
 
-This CLI application allows the user to search for meal plans based on diets and intolerances. The user can view recipe details and save ingredients for desired number of servings in the shopping list. User can save ingredients for multiple recipes.
+This CLI application allows the user to search for meal plans based on diets and intolerances. The user can view the recipe details with ingredients, instructions, servings, and cooking time. The application will let the user save any and even multiple recipes' ingredients with desired number of servings to the shopping list. Then the user can retrieve the full shopping list when done.
 
 ## Installation
 
