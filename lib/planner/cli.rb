@@ -6,7 +6,7 @@ class SpoontasticMealPlan::CLI
         a = Artii::Base.new
         puts ""
         puts a.asciify('H E L L O !').green
-        puts "Welcome to Spoontastic Meal Plan!".upcase.black.on_yellow
+        puts "W e l c o m e  t o  S p o o n t a s t i c  M e a l  P l a n!".upcase.black.on_yellow
         puts ""
 
         get_diet
@@ -83,14 +83,12 @@ class SpoontasticMealPlan::CLI
 
 #Mealplan Controller
     def get_mealplan_day
-        puts ""
-        puts "Here's your curated daily meal plan:".black.on_yellow
-        puts ""
-
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
     end
 
     def display_mealplan_day
+        puts ""
+        puts "Here's your curated daily meal plan:".black.on_yellow
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts ""
             puts "#{i}.#{recipe_obj.title}".magenta.underline
@@ -115,6 +113,7 @@ class SpoontasticMealPlan::CLI
 
         unless selection_validation(input)
             invalid_input
+            display_mealplan_day
             select_recipe
         end
 
@@ -145,9 +144,6 @@ class SpoontasticMealPlan::CLI
 
         recipe_ingredient = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
         recipe.add_ingredient(recipe_ingredient)
-
-        # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)
-        # recipe.add_serving(recipe_serving)
 
         display_recipe(recipe)
     end
@@ -188,14 +184,8 @@ class SpoontasticMealPlan::CLI
 
     def shopping_list(recipe)
         prompt = TTY::Prompt.new
-        # puts ""
-        # puts "Would you like to add these ingredients to your shopping list? (y/n)"
         puts ""
         input = prompt.yes?("Would you like to add these ingredients to your shopping list?")
-        # unless planner_input_validation(input)
-        #   invalid_input
-        #   shopping_list(recipe)
-        # end
 
         if input
           update_serving(recipe)
@@ -211,14 +201,9 @@ class SpoontasticMealPlan::CLI
     end
 
     def update_serving(recipe)
+        prompt = TTY::Prompt.new
         puts ""
-        puts "How many servings of #{recipe.title} would you like to make?".black.on_light_green
-        puts ""
-        serving_input = gets.strip.to_i
-        unless serving_input > 0
-          invalid_input
-          update_serving(recipe)
-        end
+        serving_input = prompt.ask("How many servings of #{recipe.title} would you like to make (1-20)?") { |q| q.in("1-20") }
 
         updated_ingredient = recipe.ingredient.map do |ingredient_hash|
           ingredient_hash["amount"] *= (serving_input.to_f / recipe.servings.to_f)
@@ -232,17 +217,10 @@ class SpoontasticMealPlan::CLI
     end
 
     def display_shopping_list
-        prompt = TTY::Prompt.new
         puts ""
-        # puts "Would you like to see your shopping list? (y/n)"
-        # puts ""
+        prompt = TTY::Prompt.new
         display_sl_input = prompt.yes?("Would you like to see your shopping list?")
         puts ""
-        # unless display_sl_input_validation(display_sl_input)
-        #   puts "Invalid input. Let's try again.".red.on_yellow
-        #   display_shopping_list
-        # end
-
 
         if display_sl_input
             puts "Shopping list:".black.on_yellow
@@ -258,19 +236,14 @@ class SpoontasticMealPlan::CLI
         end
     end
 
-    # def display_sl_input_validation(input)
-    #     input == "y" || input == "n"
-    # end
-
     def get_more_input
         puts ""
-        puts "Enter 'more' to add more ingredients or 'x' to quit.".black.on_light_green
-        puts ""
-        more_input = gets.strip.downcase
-        unless more_input_validation(more_input)
-          invalid_input
-          get_more_input
+        prompt = TTY::Prompt.new
+        more_input = prompt.select("Would you like to see more recipes? Or quit the program?") do |menu|
+            menu.choice "more"
+            menu.choice "quit"
         end
+
 
         if more_input == "more"
             display_mealplan_day
@@ -278,10 +251,7 @@ class SpoontasticMealPlan::CLI
         else
            goodbye
         end
-    end
-
-    def more_input_validation(input)
-        input == "more" || "x" || "exit"
+        
     end
 
     def invalid_input
