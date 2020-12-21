@@ -3,6 +3,9 @@ require "open-uri"
 require "httparty"
 require "net/http"
 require "pry"
+require "tty-prompt"
+require "colorize"
+require "artii"
 require "dotenv"
 Dotenv.load
 

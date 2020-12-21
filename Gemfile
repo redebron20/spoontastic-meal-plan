@@ -7,3 +7,4 @@ gem "rake", "~> 12.0"
 gem 'httparty'
 gem 'dotenv'
 gem 'nokogiri'
+gem 'tty-prompt'

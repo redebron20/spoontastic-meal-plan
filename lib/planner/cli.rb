@@ -1,10 +1,12 @@
 class SpoontasticMealPlan::CLI
 
-    attr_accessor :user_diet, :user_intolerance #:timeframe
+    attr_accessor :user_diet, :user_intolerance
 
-    def call
+    def run
+        a = Artii::Base.new
         puts ""
-        puts "Hello! Welcome to Spoontastic Meal Plan."
+        puts a.asciify('H E L L O !').green
+        puts "Welcome to Spoontastic Meal Plan!".upcase.black.on_yellow
         puts ""
 
         get_diet
@@ -12,19 +14,23 @@ class SpoontasticMealPlan::CLI
 
         get_mealplan_day
         display_mealplan_day
-        select_recipe   
+        select_recipe
     end
+
 
     def get_diet
         diet_list = SpoontasticMealPlan::MealScraper.diets
         puts ""
-        puts "Please select your diet from the below list. Use a comma to separate multiple choices (e.g., '3, 5'). Press 'n' if you don't follow these diets."
+        puts "Please select your diet from the below list. Use a comma to separate multiple choices (e.g., '3, 5').".black.on_light_green
+        puts "Type 'n' if you don't follow these diets.".black.on_light_green
+        puts ""
         list_results(diet_list)
+        puts ""
 
         diet_input = gets.strip.split(", ")
         unless input_validation(diet_input, diet_list)
             puts ""
-            puts "Invalid input. Let's try again."
+            invalid_input
             puts ""
             get_diet
         end
@@ -35,17 +41,18 @@ class SpoontasticMealPlan::CLI
     def get_intolerance
         intolerance_list = SpoontasticMealPlan::MealScraper.intolerances
         puts ""
-        puts "Please select intolerance/s from the below list. Use a comma to separate multiple choices (e.g., '3, 5'). Press 'n' if none."
+        puts "Please select intolerance/s from the below list. Use a comma to separate multiple choices (e.g., '3, 5').".black.on_light_green
+        puts "Type 'n' if none.".black.on_light_green
         puts ""
         list_results(intolerance_list)
+        puts ""
 
         intolerance_input = gets.strip.split(", ")
         unless input_validation(intolerance_input, intolerance_list)
-            puts ""
-            puts "Invalid input. Let's try again."
+            invalid_input
             get_intolerance
         end
-        
+
         @user_intolerance = select_search_word(intolerance_input, intolerance_list)
     end
 
@@ -58,27 +65,27 @@ class SpoontasticMealPlan::CLI
     def input_validation(input_arr, data)
         input_arr.all? do |input|
           (1..data.length).include?(input.to_i) || input.downcase == "n"
-        end   
+        end
     end
 
     def select_search_word(input_arr, data)
         input_arr.map do |input|
           input.downcase == "n" ? "" : data[input.to_i - 1]
-        end 
+        end
     end
 
     def search_hash
         @search_hash = {
           diet: user_diet,
           intolerance: user_intolerance,
-          #timeframe: timeframe
         }
     end
 
 #Mealplan Controller
-    def get_mealplan_day 
-        puts ""       
-        puts "Here's your curated meal plan for the day:"
+    def get_mealplan_day
+        puts ""
+        puts "Here's your curated daily meal plan:".black.on_yellow
+        puts ""
 
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
     end
@@ -86,11 +93,10 @@ class SpoontasticMealPlan::CLI
     def display_mealplan_day
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts ""
-            puts "#{i}. #{recipe_obj.title}"
+            puts "#{i}.#{recipe_obj.title}".magenta.underline
             puts "Ready in #{recipe_obj.readyinMinutes} minutes"
-            puts "Servings #{recipe_obj.servings}"
             puts ""
-        end 
+        end
     end
 
     def get_new_mealplan_list
@@ -100,16 +106,18 @@ class SpoontasticMealPlan::CLI
     end
 
     def select_recipe
-        puts "Type a number to see the recipe, or enter 'new' to generate a new list."
+        puts ""
+        puts "Select a number to learn more about the recipe, or enter 'new' to generate a new meal plan.".black.on_light_green
+        puts ""
         #puts "Enter 'x' to quit the program."
 
         input = gets.strip.downcase
-    
+
         unless selection_validation(input)
-            puts "Invalid input. Let's try again."
+            invalid_input
             select_recipe
         end
-    
+
         if input == "new"
             get_new_mealplan_list
             select_recipe
@@ -117,9 +125,9 @@ class SpoontasticMealPlan::CLI
         #     goodbye
         elsif
             get_recipe(input)
-        end 
+        end
     end
-    
+
     def selection_validation(input)
         (1..SpoontasticMealPlan::Meal.all.length).include?(input.to_i) || input == "new"
     end
@@ -131,29 +139,29 @@ class SpoontasticMealPlan::CLI
     end
 
     def add_recipe_details(recipe)
-        
+
         recipe_instruction = SpoontasticMealPlan::API.get_recipe_instruction(recipe.id)
         recipe.add_instruction(recipe_instruction.flatten)
-    
+
         recipe_ingredient = SpoontasticMealPlan::API.get_recipe_ingredient(recipe.id)
         recipe.add_ingredient(recipe_ingredient)
-               
+
         # recipe_serving = SpoontasticMealPlan::API.get_serving(recipe.id)
         # recipe.add_serving(recipe_serving)
-      
+
         display_recipe(recipe)
-    end 
+    end
 
     def display_recipe(recipe)
         puts ""
-        puts "Title: #{recipe.title}"
+        puts "Title: #{recipe.title}".upcase.black.on_yellow
         puts "Cook Time: #{recipe.readyinMinutes} minutes"
         puts "Serves: #{recipe.servings}"
         puts ""
-        puts "Steps:"
+        puts "Steps:".magenta.underline
         recipe.instruction.each.with_index(1) { |step, i| puts "#{i}. #{step}" }
         puts ""
-        puts "Ingredients:"
+        puts "Ingredients:".magenta.underline
         recipe.ingredient.each do |ingredient_hash|
             parsed_amount = parse_ingredient_amount(ingredient_hash["amount"])
             puts "#{parsed_amount} #{ingredient_hash['unit']} #{ingredient_hash['name']}"
@@ -179,96 +187,118 @@ class SpoontasticMealPlan::CLI
     end
 
     def shopping_list(recipe)
-        puts "Would you like to add ingredients to your shopping list? (y/n)"
-        input = gets.strip.downcase
-        unless planner_input_validation(input)
-          puts "Invalid input. Let's try again."
-          shopping_list(recipe)
-        end
-    
-        if input == "y"
+        prompt = TTY::Prompt.new
+        # puts ""
+        # puts "Would you like to add these ingredients to your shopping list? (y/n)"
+        puts ""
+        input = prompt.yes?("Would you like to add these ingredients to your shopping list?")
+        # unless planner_input_validation(input)
+        #   invalid_input
+        #   shopping_list(recipe)
+        # end
+
+        if input
           update_serving(recipe)
           display_shopping_list
-        else 
+        else
           display_mealplan_day
           select_recipe
         end
-    end 
+    end
 
     def planner_input_validation(input)
-        input == "y" || input == "n"
-    end 
+        input || !input
+    end
 
     def update_serving(recipe)
-        puts "How many servings of #{recipe.title} would you like to make?"
+        puts ""
+        puts "How many servings of #{recipe.title} would you like to make?".black.on_light_green
+        puts ""
         serving_input = gets.strip.to_i
         unless serving_input > 0
-          puts "Invalid input. Let's try again."
+          invalid_input
           update_serving(recipe)
-        end 
-        
+        end
+
         updated_ingredient = recipe.ingredient.map do |ingredient_hash|
           ingredient_hash["amount"] *= (serving_input.to_f / recipe.servings.to_f)
           ingredient_hash
         end
 
         SpoontasticMealPlan::Ingredient.create_from_collection(updated_ingredient)
-        puts "Ingredients for #{serving_input} servings of #{recipe.title} added to your shopping list."
-    end 
+        puts ""
+        puts "Ingredients for #{serving_input} servings of #{recipe.title} have been added to your shopping list.".black.on_magenta
+        puts ""
+    end
 
     def display_shopping_list
+        prompt = TTY::Prompt.new
         puts ""
-        puts "Would you like to see your shopping list? (y/n)"
-        display_sl_input = gets.strip.downcase
-        unless display_sl_input_validation(display_sl_input)
-          puts "Invalid input. Let's try again."
-          display_shopping_list
-        end
-    
-        if display_sl_input == "y"
+        # puts "Would you like to see your shopping list? (y/n)"
+        # puts ""
+        display_sl_input = prompt.yes?("Would you like to see your shopping list?")
+        puts ""
+        # unless display_sl_input_validation(display_sl_input)
+        #   puts "Invalid input. Let's try again.".red.on_yellow
+        #   display_shopping_list
+        # end
+
+
+        if display_sl_input
+            puts "Shopping list:".black.on_yellow
+            puts ""
             SpoontasticMealPlan::Ingredient.all.each do |ingredient_obj|
                 parsed_amount = parse_ingredient_amount(ingredient_obj.amount)
                 puts "#{parsed_amount} #{ingredient_obj.unit} #{ingredient_obj.name}"
             end
             get_more_input
-        else 
+        else
             display_mealplan_day
             select_recipe
         end
-    end 
+    end
 
-    def display_sl_input_validation(input)
-        input == "y" || input == "n"
-    end 
-    
+    # def display_sl_input_validation(input)
+    #     input == "y" || input == "n"
+    # end
+
     def get_more_input
-        puts "Enter 'more' to add more ingredients or 'x' to quit."
+        puts ""
+        puts "Enter 'more' to add more ingredients or 'x' to quit.".black.on_light_green
+        puts ""
         more_input = gets.strip.downcase
         unless more_input_validation(more_input)
-          puts "Invalid input. Let's try again."
+          invalid_input
           get_more_input
-        end 
-    
+        end
+
         if more_input == "more"
             display_mealplan_day
             select_recipe
-        else 
+        else
            goodbye
-        end  
+        end
     end
-    
+
     def more_input_validation(input)
         input == "more" || "x" || "exit"
     end
-    
+
+    def invalid_input
+        puts "Invalid input. Let's try again.".red
+    end
+
     def goodbye
+        a = Artii::Base.new
         puts ""
-        puts "Thanks for using the app! Please come back anytime."
+        puts "Thank you for using the app!".black.on_yellow
+        puts ""
+        puts a.asciify('G O O D B Y E!').green
     end
 
 end
 
 
-    
+
 
 
