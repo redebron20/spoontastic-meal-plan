@@ -19,13 +19,13 @@ class SpoontasticMealPlan::CLI
 
 
     def get_diet
-        diet_list = SpoontasticMealPlan::MealScraper.diets
         puts ""
         puts "Please select your diet from the below list. Use a comma to separate multiple choices (e.g., '3, 5').".black.on_light_green
         puts "Type 'n' if you don't follow these diets.".black.on_light_green
         puts ""
+
+        diet_list = SpoontasticMealPlan::MealScraper.diets
         list_results(diet_list)
-        puts ""
 
         diet_input = gets.strip.split(", ")
         unless input_validation(diet_input, diet_list)
@@ -36,16 +36,17 @@ class SpoontasticMealPlan::CLI
         end
 
         @user_diet = select_search_word(diet_input, diet_list)
+      
     end
 
     def get_intolerance
-        intolerance_list = SpoontasticMealPlan::MealScraper.intolerances
         puts ""
         puts "Please select intolerance/s from the below list. Use a comma to separate multiple choices (e.g., '3, 5').".black.on_light_green
         puts "Type 'n' if none.".black.on_light_green
         puts ""
+
+        intolerance_list = SpoontasticMealPlan::MealScraper.intolerances
         list_results(intolerance_list)
-        puts ""
 
         intolerance_input = gets.strip.split(", ")
         unless input_validation(intolerance_input, intolerance_list)
@@ -62,15 +63,15 @@ class SpoontasticMealPlan::CLI
         end
     end
 
-    def input_validation(input_arr, data)
-        input_arr.all? do |input|
-          (1..data.length).include?(input.to_i) || input.downcase == "n"
+    def input_validation(user_input, choices)
+        user_input.all? do |input|
+          (1..choices.length).include?(input.to_i) || input.downcase == "n"
         end
     end
 
-    def select_search_word(input_arr, data)
-        input_arr.map do |input|
-          input.downcase == "n" ? "" : data[input.to_i - 1]
+    def select_search_word(user_input, list)
+        user_input.map do |input|
+          input.downcase == "n" ? "" : list[input.to_i - 1]
         end
     end
 
@@ -81,14 +82,13 @@ class SpoontasticMealPlan::CLI
         }
     end
 
-#Mealplan Controller
     def get_mealplan_day
         SpoontasticMealPlan::API.get_mealplan_day(search_hash)
     end
 
     def display_mealplan_day
         puts ""
-        puts "Here's your curated daily meal plan:".black.on_yellow
+        puts "Here's your curated daily meal plan:".upcase.black.on_yellow
         SpoontasticMealPlan::Meal.all.each.with_index(1) do |recipe_obj, i|
             puts ""
             puts "#{i}.#{recipe_obj.title}".magenta.underline
@@ -105,7 +105,8 @@ class SpoontasticMealPlan::CLI
 
     def select_recipe
         puts ""
-        puts "Select a number to learn more about the recipe, or enter 'new' to generate a new meal plan.".black.on_light_green
+        puts "Select a number to learn more about the recipe.".black.on_light_green
+        puts "Or enter 'new' to generate a new meal plan.".black.on_light_green
         puts ""
         #puts "Enter 'x' to quit the program."
 
@@ -120,8 +121,6 @@ class SpoontasticMealPlan::CLI
         if input == "new"
             get_new_mealplan_list
             select_recipe
-        # elsif input == "x" || "exit"
-        #     goodbye
         elsif
             get_recipe(input)
         end
@@ -223,7 +222,7 @@ class SpoontasticMealPlan::CLI
         puts ""
 
         if display_sl_input
-            puts "Shopping list:".black.on_yellow
+            puts "Shopping list:".black.on_green
             puts ""
             SpoontasticMealPlan::Ingredient.all.each do |ingredient_obj|
                 parsed_amount = parse_ingredient_amount(ingredient_obj.amount)
@@ -244,14 +243,12 @@ class SpoontasticMealPlan::CLI
             menu.choice "quit"
         end
 
-
         if more_input == "more"
             display_mealplan_day
             select_recipe
         else
            goodbye
-        end
-        
+        end      
     end
 
     def invalid_input
